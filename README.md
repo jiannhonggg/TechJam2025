@@ -16,7 +16,7 @@ n = Z^2 * p * (1-p) / e^2
 Esstimated about 70-75 Samples per class is statistically reasonable. 
 Try to source for equal number of reviews per class. 
 If not enough we can use stratified sampling across classes to cover all violation types. 
-Total 280 Reviews
+Total 280 Reviews ++ 
 
 
 For Presentation itself 
