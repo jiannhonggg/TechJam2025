@@ -7,6 +7,12 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [pluginReact()],
+  source: {
+    define: {
+      // Ensure environment variables are available
+      'import.meta.env.VITE_OPENAI_API_KEY': JSON.stringify(process.env.VITE_OPENAI_API_KEY || ''),
+    },
+  },
   server: {
     publicDir: [
       {

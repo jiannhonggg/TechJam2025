@@ -66,8 +66,8 @@
 }
 
 .chart-wrap {
-  width: 180px;
-  height: 180px;
+  width: 320px;
+  height: 220px;
   border-radius: 8px;
   padding: 8px;
   background: rgba(255,255,255,0.01);
@@ -224,7 +224,7 @@
 
 .col-example {
   opacity: 0.85;
-  color: #d7eefe;
+  color: #002e4f;
 }
 
 .dashboard-footer {
@@ -246,7 +246,7 @@
     gap: 6px;
   }
   .chart-wrap {
-    width: 140px;
-    height: 140px;
+    width: 200px;
+    height: 160px;
   }
 }

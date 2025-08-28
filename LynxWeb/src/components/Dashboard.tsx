@@ -1,8 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
 import logo from '../assets/lynx-logo.png';
+import avatar from '../assets/react-logo.png';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
+import ChatAssistant from './ChatAssistant';
 import { fetchStats, fetchPolicies, fetchPieData } from '../mockApi';
 
 Chart.register(ArcElement, Tooltip, Legend);
@@ -19,18 +21,13 @@ type Policy = {
   example: string;
 };
 
-const StatCard: React.FC<{ stat: Stat; draggable?: boolean }> = ({ stat }) => (
-  <div className="stat-card" draggable>
-    <div className="stat-value">{stat.value}</div>
-    <div className="stat-label">{stat.label}</div>
-    {stat.delta && <div className="stat-delta">{stat.delta}</div>}
-  </div>
-);
 
 const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<Stat[]>([]);
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [pieData, setPieData] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [localDate, setlocalDate] = useState<string>('');
 
   useEffect(() => {
     let mounted = true;
@@ -46,112 +43,18 @@ const Dashboard: React.FC = () => {
     };
   }, []);
 
-  // Simple drag/drop to reorder stat cards or panels
-  const onDragStart = (e: React.DragEvent, idx: number) => {
-    e.dataTransfer.setData('text/plain', String(idx));
-    e.dataTransfer.effectAllowed = 'move';
-  };
+  useEffect(() => {
+    const updatelocal = () => {
+      const now = new Date();
+      const dateStr = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'Asia/Singapore' }).format(now);
+      const timeStr = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Singapore' }).format(now);
+      setlocalDate(`${dateStr} • ${timeStr}`);
+    };
+    updatelocal();
+    const id = setInterval(updatelocal, 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
 
-  const onDropStat = (e: React.DragEvent, targetIdx: number) => {
-    const src = Number(e.dataTransfer.getData('text/plain'));
-    if (Number.isNaN(src)) return;
-    e.preventDefault();
-    const copy = [...stats];
-    const [item] = copy.splice(src, 1);
-    copy.splice(targetIdx, 0, item);
-    setStats(copy);
-  };
-
-  const allowDrop = (e: React.DragEvent) => e.preventDefault();
-
-  // For panels (stats area and policies area) simple reorder
-  const [panels, setPanels] = useState<string[]>(['stats', 'policies']);
-  const onPanelDragStart = (e: React.DragEvent, id: string) => {
-    e.dataTransfer.setData('panel', id);
-  };
-  const onPanelDrop = (e: React.DragEvent, target: string) => {
-    e.preventDefault();
-    const src = e.dataTransfer.getData('panel');
-    if (!src || src === target) return;
-    const copy = [...panels];
-    const from = copy.indexOf(src);
-    const to = copy.indexOf(target);
-    copy.splice(from, 1);
-    copy.splice(to, 0, src);
-    setPanels(copy);
-  };
-
-  const renderStats = useCallback(() => {
-    return (
-      <section
-        className="panel stats-panel"
-        draggable
-        onDragStart={(e) => onPanelDragStart(e, 'stats')}
-        onDragOver={allowDrop}
-        onDrop={(e) => onPanelDrop(e, 'stats')}
-      >
-        <h3 className="panel-title">Overview</h3>
-        <div className="stats-grid">
-          {stats.map((s, i) => (
-            <div
-              key={s.label}
-              onDragStart={(e) => onDragStart(e, i)}
-              onDragOver={allowDrop}
-              onDrop={(e) => onDropStat(e, i)}
-              draggable
-            >
-              <StatCard stat={s} />
-            </div>
-          ))}
-        </div>
-        {pieData && (
-          <div className="chart-wrap">
-            <Doughnut
-              data={pieData}
-              options={{
-                maintainAspectRatio: false,
-                responsive: true,
-                cutout: '60%',
-                plugins: {
-                  legend: { position: 'bottom', labels: { color: '#d8e6ff' } },
-                },
-              }}
-            />
-          </div>
-        )}
-      </section>
-    );
-  }, [stats, pieData]);
-
-  const renderPolicies = useCallback(() => {
-    return (
-      <section
-        className="panel policies-panel"
-        draggable
-        onDragStart={(e) => onPanelDragStart(e, 'policies')}
-        onDragOver={allowDrop}
-        onDrop={(e) => onPanelDrop(e, 'policies')}
-      >
-        <h3 className="panel-title">Policy Catalog</h3>
-        <div className="policies-table">
-          <div className="table-head">
-            <div>Policy Type</div>
-            <div>Description</div>
-            <div>Example Violation</div>
-          </div>
-          <div className="table-body">
-            {policies.map((p) => (
-              <div className="table-row" key={p.type}>
-                <div className="col-type">{p.type}</div>
-                <div className="col-desc">{p.description}</div>
-                <div className="col-example">{p.example}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }, [policies]);
 
   return (
     <div className="app-shell">
@@ -175,7 +78,7 @@ const Dashboard: React.FC = () => {
 
         <div className="sidebar-bottom">
           <div className="user">
-            <img src="/src/assets/react-logo.png" alt="avatar" />
+            <img src={avatar} alt="avatar" />
             <div className="user-info">
               <div className="user-name">Joe Ma</div>
               <div className="user-role">Administrator</div>
@@ -188,8 +91,13 @@ const Dashboard: React.FC = () => {
         <header className="main-header">
           <h2>Dashboard</h2>
           <div className="header-right">
-            <input className="search" placeholder="Search" />
-            <div className="date">Monday, July 2</div>
+            <input
+              className="search"
+              placeholder="Search policies"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <div className="date">{localDate}</div>
           </div>
         </header>
 
@@ -214,13 +122,23 @@ const Dashboard: React.FC = () => {
                   <div>Example Violation</div>
                 </div>
                 <div className="table-body">
-                  {policies.map((p) => (
-                    <div className="table-row" key={p.type}>
-                      <div className="col-type">{p.type}</div>
-                      <div className="col-desc">{p.description}</div>
-                      <div className="col-example">{p.example}</div>
-                    </div>
-                  ))}
+                  {policies
+                    .filter((p) => {
+                      if (!searchTerm.trim()) return true;
+                      const q = searchTerm.toLowerCase();
+                      return (
+                        p.type.toLowerCase().includes(q) ||
+                        p.description.toLowerCase().includes(q) ||
+                        p.example.toLowerCase().includes(q)
+                      );
+                    })
+                    .map((p) => (
+                      <div className="table-row" key={p.type}>
+                        <div className="col-type">{p.type}</div>
+                        <div className="col-desc">{p.description}</div>
+                        <div className="col-example">{p.example}</div>
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
@@ -237,7 +155,19 @@ const Dashboard: React.FC = () => {
                       maintainAspectRatio: false,
                       responsive: true,
                       cutout: '60%',
-                      plugins: { legend: { position: 'bottom', labels: { color: '#021026' } } },
+                      plugins: {
+                        legend: {
+                          position: 'left',
+                          align: 'start',
+                          labels: {
+                            color: '#021026',
+                            boxWidth: 12,
+                            padding: 12,
+                            font: { size: 13 },
+                          },
+                        },
+                      },
+                      layout: { padding: { left: 8, right: 8 } },
                     }}
                   />
                 ) : (
@@ -250,6 +180,7 @@ const Dashboard: React.FC = () => {
 
         <footer className="main-footer">Team Win One • {new Date().getFullYear()}</footer>
       </main>
+  <ChatAssistant />
     </div>
   );
 };

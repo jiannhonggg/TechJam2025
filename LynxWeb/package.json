@@ -11,9 +11,11 @@
   "dependencies": {
     "@lynx-js/web-core": "^0.15.7",
     "@lynx-js/web-elements": "^0.8.4",
-  "chart.js": "^4.4.0",
-  "react-chartjs-2": "^5.2.0",
+    "ai": "^5.0.27",
+    "chart.js": "^4.4.0",
+    "openai": "^5.16.0",
     "react": "^19.1.1",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
