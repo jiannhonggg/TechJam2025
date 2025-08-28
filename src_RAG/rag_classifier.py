@@ -17,13 +17,23 @@ class RAGClassifier:
         response = ollama.chat(model="llama2:7b", messages=messages)
         return response.get("message", {}).get("content", "")
 
-    def classify(self, review_text):
+    def classify(self, review_text, shop_info = None):
         passages = self.vector_store.query(review_text, top_k=self.top_k)
         context = "\n".join(passages)
+        # Optional Metadata of shops 
+        if shop_info:
+            shop_context = "Shop Info:\n"
+            for k, v in shop_info.items():
+                shop_context += f"- {k}: {v}\n"
+        else:
+            shop_context = ""
+
+        # Build the Prompt 
         prompt = f"""
         You are a location review classifier. Use the context below to classify the review.
         Return JSON with 'label' (one of: {labels}) and 'rationale' (short explanation).
-
+        {shop_context}
+        
         Context:
         {context}
 
@@ -56,6 +66,13 @@ if __name__ == "__main__":
     ]
 
     for review in test_reviews:
-        result = classifier.classify(review)
+        # result = classifier.classify(review)
+        
+        shop_info = {
+            "Name": "Pizza Town",
+            "Type": "Restaurant",
+            "Known Promotions": "2-for-1 Tuesday deal, Student discount"}           
+        result2 = classifier.classify(review, shop_info = shop_info) 
+        
         print(f"\nReview: {review}")
-        print(f"Prediction: {result}")
+        print(f"Prediction: {result2}")
