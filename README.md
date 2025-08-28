@@ -20,6 +20,12 @@ Total 280 Reviews ++
 
 
 For Presentation itself 
-- Diverse Examples 
+- Diverse Examples ? 
 - Reviews that are borderline (ambiguous) Demonstrate RAG reasoning. 
 - Highlight Misclassified Reveiws to discuss Limitations 
+
+
+Choice of Models : Arbitary choice 
+llama2:7b 
+deepseek-r1:7b 
+gemma3:4b 
