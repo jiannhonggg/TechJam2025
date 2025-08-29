@@ -1,0 +1,33 @@
+ 
+[
+  {
+    "text": "Best pizza in town! Highly recommend.",
+    "label": "valid",
+    "rationale": "Positive review, relevant to the location."
+  },
+  {
+    "text": "Visit www.pizzapromo.com for a discount!",
+    "label": "advertisement",
+    "rationale": "Contains a URL and promotional content."
+  },
+  {
+    "text": "Never been here but I heard it's terrible.",
+    "label": "rant_without_visit",
+    "rationale": "User admits they haven't visited."
+  },
+  {
+    "text": "I love my new phone, but this cafe was noisy.",
+    "label": "irrelevant",
+    "rationale": "Mentions unrelated topic (phone) in review."
+  },
+  {
+    "text": "The coffee was great and the staff were friendly.",
+    "label": "valid",
+    "rationale": "Directly about the location and positive."
+  },
+  {
+    "text": "Check out this deal at www.cafepromo.com!",
+    "label": "advertisement",
+    "rationale": "Contains URL and promo content."
+  }
+]
