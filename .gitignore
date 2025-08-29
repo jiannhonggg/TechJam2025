@@ -8,6 +8,7 @@
 # Dist
 node_modules
 dist/
+__pycache__
 
 # Profile
 .rspack-profile-*/

@@ -1,5 +1,8 @@
 pandas
 ollama
-fiass-cpu
+faiss-cpu
 flask 
-ngrok
+pyngrok
+sentence_transformers
+torch
+numpy

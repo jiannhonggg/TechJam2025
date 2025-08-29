@@ -2,13 +2,18 @@ import json
 import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
+import torch
 
 class VectorStore: 
     def __init__(self, policies_path, exemplars_path, embedding_model="all-MiniLM-L6-v2"):
         self.policies_path = policies_path
         self.exemplars_path = exemplars_path
         self.embedding_model_name = embedding_model
-        self.model = SentenceTransformer(embedding_model)
+        
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.model = SentenceTransformer(embedding_model, device=device)
+        print(f"Using device: {device} for embeddings")
+        
         self.passages = []  # list of original texts
         self.index = None   # FAISS index
         self._build_index()
@@ -30,10 +35,24 @@ class VectorStore:
 
     def _build_index(self):
         self._load_assets()
-        embeddings = self.model.encode(self.passages, convert_to_numpy=True, normalize_embeddings=True)
+        embeddings = self.model.encode(
+            self.passages, 
+            convert_to_numpy=True, 
+            normalize_embeddings=True,
+            batch_size=32,
+            show_progress_bar=True
+        )
         dim = embeddings.shape[1]
-        self.index = faiss.IndexFlatIP(dim)  # Inner product for cosine similarity
-        self.index.add(embeddings)
+        
+        if torch.cuda.is_available():
+            res = faiss.StandardGpuResources()
+            self.index = faiss.IndexFlatIP(dim)
+            self.gpu_index = faiss.index_cpu_to_gpu(res, 0, self.index)
+            self.gpu_index.add(embeddings)
+            self.index = self.gpu_index
+        else:
+            self.index = faiss.IndexFlatIP(dim)  # Inner product for cosine similarity
+            self.index.add(embeddings)
 
     def query(self, review_text, top_k=3):
         # Embed the review
