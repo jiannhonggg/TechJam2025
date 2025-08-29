@@ -1,3 +1,5 @@
 pandas
 ollama
 fiass-cpu
+flask 
+ngrok
