@@ -5,7 +5,7 @@ import avatar from '../assets/react-logo.png';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 import ChatAssistant from './ChatAssistant';
-import { fetchStats, fetchPolicies, fetchPieData } from '../mockApi';
+import { fetchStats, fetchPolicies, fetchPieData, fetchReviews } from '../mockApi';
 
 Chart.register(ArcElement, Tooltip, Legend);
 
@@ -21,10 +21,19 @@ type Policy = {
   example: string;
 };
 
+type Review = {
+  id: number;
+  timeOfReview: string;
+  reviewerName: string;
+  reviewContent: string;
+  violationType: string;
+};
+
 
 const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<Stat[]>([]);
   const [policies, setPolicies] = useState<Policy[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [pieData, setPieData] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [localDate, setlocalDate] = useState<string>('');
@@ -32,11 +41,12 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const [s, p, pie] = await Promise.all([fetchStats(), fetchPolicies(), fetchPieData()]);
+      const [s, p, pie, r] = await Promise.all([fetchStats(), fetchPolicies(), fetchPieData(), fetchReviews()]);
       if (!mounted) return;
       setStats(s);
       setPolicies(p);
       setPieData(pie);
+      setReviews(r);
     })();
     return () => {
       mounted = false;
@@ -67,12 +77,12 @@ const Dashboard: React.FC = () => {
 
           <nav className="menu">
             <div className="menu-item active">Dashboard</div>
-            <div className="menu-item">Tab2</div>
+            {/* <div className="menu-item">Tab2</div>
             <div className="menu-item">Tab3 <span className="badge">999</span></div>
             <div className="menu-item">Tab4 <span className="badge">999</span></div>
             <div className="menu-item">Tab5 <span className="badge">999</span></div>
             <div className="menu-item">Tab6 <span className="badge">999</span></div>
-            <div className="menu-item">Tab7 <span className="badge">999</span></div>
+            <div className="menu-item">Tab7 <span className="badge">999</span></div> */}
           </nav>
         </div>
 
@@ -147,7 +157,7 @@ const Dashboard: React.FC = () => {
           <div className="right-col">
             <div className="panel card">
               <div className="panel-title">Policy Types</div>
-              <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="chart-wrap">
+              <div className="chart-wrap">
                 {pieData ? (
                   <Doughnut
                     data={pieData}
@@ -173,6 +183,32 @@ const Dashboard: React.FC = () => {
                 ) : (
                   <div className="chart-placeholder">Loading chart...</div>
                 )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="reviews-section">
+          <div className="panel card">
+            <div className="panel-title">Recent Reviews</div>
+            <div className="reviews-table">
+              <div className="reviews-table-head">
+                <div>Time of Review</div>
+                <div>Reviewer Name</div>
+                <div>Review Content</div>
+                <div>Violation Type</div>
+              </div>
+              <div className="reviews-table-body">
+                {reviews.map((review) => (
+                  <div className="reviews-table-row" key={review.id}>
+                    <div className="col-time">{review.timeOfReview}</div>
+                    <div className="col-reviewer">{review.reviewerName}</div>
+                    <div className="col-content">{review.reviewContent}</div>
+                    <div className={`col-violation ${review.violationType === 'Compliant' ? 'compliant' : 'violation'}`}>
+                      {review.violationType}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

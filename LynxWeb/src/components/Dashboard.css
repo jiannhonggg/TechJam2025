@@ -1,11 +1,11 @@
 .dashboard-root {
   min-height: 100vh;
-  padding: 28px 36px;
+  padding: 2rem 2.5rem;
   box-sizing: border-box;
   color: #e6eef8;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.25rem;
 }
 
 .dashboard-header {
@@ -17,12 +17,12 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .brand img {
-  height: 44px;
-  width: 44px;
+  height: 2.75rem;
+  width: 2.75rem;
   object-fit: contain;
 }
 
@@ -36,9 +36,9 @@
   background: transparent;
   border: 1px solid rgba(255,255,255,0.08);
   color: #d8e6ff;
-  padding: 8px 12px;
-  border-radius: 6px;
-  margin-left: 8px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  margin-left: 0.5rem;
   cursor: pointer;
 }
 
@@ -50,26 +50,26 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 1rem;
 }
 
 .stats-panel {
   display: flex;
-  gap: 16px;
+  gap: 1rem;
   align-items: flex-start;
   flex-wrap: wrap;
 }
 
 .stats-panel .stats-grid {
-  flex: 1 1 420px;
+  flex: 1 1 26.25rem;
 }
 
 .chart-wrap {
-  width: 320px;
-  height: 220px;
-  border-radius: 8px;
-  padding: 8px;
+  width: min(20rem, 45vw);
+  height: min(13.75rem, 30vh);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
   background: rgba(255,255,255,0.01);
   display: flex;
   align-items: center;
@@ -81,7 +81,6 @@
   height: 100% !important;
 }
 
-/* App shell */
 .app-shell {
   display: flex;
   min-height: 100vh;
@@ -90,72 +89,80 @@
 }
 
 .sidebar {
-  width: 220px;
+  width: min(13.75rem, 25vw);
   background: #2b2f33;
   color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
   font-weight: 700;
   font-size: 1.1rem;
 }
-.logo img { height: 28px; width:28px }
+.logo img { height: 1.75rem; width: 1.75rem }
 
-.menu { margin-top: 24px; display:flex; flex-direction:column; gap:10px }
-.menu-item { padding: 10px; border-radius:6px; color: rgba(255,255,255,0.8) }
+.menu { margin-top: 1.5rem; display:flex; flex-direction:column; gap: 0.625rem }
+.menu-item { padding: 0.625rem; border-radius: 0.375rem; color: rgba(255,255,255,0.8) }
 .menu-item.active { background: rgba(0,0,0,0.25); }
-.badge { background:#ffcc00; color:#111; padding:2px 8px; border-radius:12px; margin-left:8px; font-size:0.75rem }
+.badge { background:#ffcc00; color:#111; padding: 0.125rem 0.5rem; border-radius: 0.75rem; margin-left: 0.5rem; font-size:0.75rem }
 
-.sidebar-bottom { margin-top: 24px }
-.user { display:flex; gap:10px; align-items:center }
-.user img { width:36px; height:36px; border-radius:50% }
+.sidebar-bottom { margin-top: 1.5rem }
+.user { display:flex; gap: 0.625rem; align-items:center }
+.user img { width: 2.25rem; height: 2.25rem; border-radius:50% }
 .user-info .user-name { font-weight:700 }
 .user-info .user-role { font-size:0.85rem; opacity:0.8 }
 
-.main { flex:1; padding:28px; box-sizing:border-box; }
-.main-header { display:flex; justify-content:space-between; align-items:center }
+.main { flex:1; padding: min(1.75rem, 3vw); box-sizing:border-box; }
+.main-header { display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 1rem; }
 .main-header h2 { margin:0 }
-.header-right { display:flex; gap:12px; align-items:center }
-.search { padding:8px 10px; border-radius:8px; border:1px solid #e1e6ea }
+.header-right { display:flex; gap: 0.75rem; align-items:center; flex-wrap: wrap; }
+.search { padding: 0.5rem 0.625rem; border-radius: 0.5rem; border:1px solid #e1e6ea; min-width: 12rem; }
 .date { opacity:0.6; font-size:0.9rem }
 
-.stats-row { display:grid; grid-template-columns: repeat(4, 1fr); gap:16px; margin-top:16px }
-.stat-card.white { background:#fff; padding:18px; border-radius:8px; box-shadow: 0 1px 0 rgba(16,24,40,0.04) }
+.stats-row { display:grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; margin-top: 1rem }
+.stat-card.white { background:#fff; padding: 1.125rem; border-radius: 0.5rem; box-shadow: 0 1px 0 rgba(16,24,40,0.04) }
 .stat-label.muted { color:#6b7280; font-size:0.9rem }
 .stat-value.dark { color:#111; font-size:1.4rem; font-weight:700 }
 .stat-delta.small { color:#10b981 }
 
-.content-grid { display:grid; grid-template-columns: 1fr 420px; gap:18px; margin-top:18px }
-.left-col .card, .right-col .card { background:#fff; border-radius:8px; padding:16px }
-.panel-title { font-weight:700; margin-bottom:12px }
-.reservations-list .res-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid #f1f4f6 }
-.res-avatar { width:40px; height:40px; border-radius:50%; background:#e2e8f0 }
+.content-grid { display:grid; grid-template-columns: 1fr min(26.25rem, 35vw); gap: 1.125rem; margin-top: 1.125rem }
+.left-col .card, .right-col .card { background:#fff; border-radius: 0.5rem; padding: 1rem }
+.panel-title { font-weight:700; margin-bottom: 0.75rem }
+.reservations-list .res-item { display:flex; gap: 0.75rem; padding: 0.625rem 0; border-bottom:1px solid #f1f4f6 }
+.res-avatar { width: 2.5rem; height: 2.5rem; border-radius:50%; background:#e2e8f0 }
 .res-name { font-weight:700 }
 .res-meta { color:#6b7280; font-size:0.9rem }
-.chart-placeholder { background: linear-gradient(180deg,#f7fafc,#ffffff); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#9ca3af }
-.popular-list .popular-item { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f1f4f6 }
+.chart-placeholder { background: linear-gradient(180deg,#f7fafc,#ffffff); border-radius: 0.375rem; display:flex; align-items:center; justify-content:center; color:#9ca3af }
+.popular-list .popular-item { display:flex; justify-content:space-between; padding: 0.5rem 0; border-bottom:1px solid #f1f4f6 }
 .price { font-weight:700 }
 
-.main-footer { margin-top:20px; color:#6b7280 }
+.main-footer { margin-top: 1.25rem; color:#6b7280 }
 
-@media (max-width: 1000px) {
+@media (max-width: 62.5rem) {
   .content-grid { grid-template-columns: 1fr }
-  .stats-row { grid-template-columns: repeat(2, 1fr) }
+  .stats-row { grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)) }
+  .sidebar { width: min(12rem, 30vw) }
+}
+
+@media (max-width: 48rem) {
   .sidebar { display:none }
+  .main { padding: min(1.25rem, 4vw); }
+  .main-header { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .header-right { justify-content: space-between; }
+  .search { min-width: auto; flex: 1; }
 }
 
 .stat-card {
   background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
   border: 1px solid rgba(255,255,255,0.04);
-  padding: 18px;
-  border-radius: 10px;
+  padding: 1.125rem;
+  border-radius: 0.625rem;
   text-align: left;
 }
 
@@ -167,34 +174,34 @@
 .stat-label {
   font-size: 0.9rem;
   opacity: 0.7;
-  margin-top: 6px;
+  margin-top: 0.375rem;
 }
 
 .stat-delta {
-  margin-top: 10px;
+  margin-top: 0.625rem;
   font-size: 0.8rem;
   color: #8ff1a6;
 }
 
 .policies-section h2 {
-  margin: 6px 0 12px 0;
+  margin: 0.375rem 0 0.75rem 0;
   font-size: 1.1rem;
 }
 
 .policies-table {
   background: rgba(255,255,255,0.02);
   border: 1px solid rgba(255,255,255,0.04);
-  border-radius: 10px;
+  border-radius: 0.625rem;
   overflow: hidden;
 }
 
 .table-head {
   display: grid;
-  grid-template-columns: 220px 1fr 320px;
-  padding: 12px 16px;
+  grid-template-columns: minmax(10rem, 1fr) minmax(15rem, 2fr) minmax(15rem, 2fr);
+  padding: 0.75rem 1rem;
   font-weight: 600;
   background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .table-body {
@@ -204,10 +211,10 @@
 
 .table-row {
   display: grid;
-  grid-template-columns: 220px 1fr 320px;
-  padding: 14px 16px;
+  grid-template-columns: minmax(10rem, 1fr) minmax(15rem, 2fr) minmax(15rem, 2fr);
+  padding: 0.875rem 1rem;
   border-top: 1px solid rgba(255,255,255,0.02);
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .table-row:nth-child(odd) {
@@ -228,12 +235,93 @@
 }
 
 .dashboard-footer {
-  margin-top: 18px;
+  margin-top: 1.125rem;
   opacity: 0.5;
   font-size: 0.85rem;
 }
 
-@media (max-width: 800px) {
+.reviews-section {
+  margin-top: 1rem;
+}
+
+.reviews-table {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 0.625rem;
+  overflow: hidden;
+  max-height: min(21.875rem, 50vh);
+  overflow-y: auto;
+}
+
+.reviews-table-head {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) minmax(10rem, 1fr) minmax(15rem, 3fr) minmax(8rem, 1fr);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  background: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  gap: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.reviews-table-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.reviews-table-row {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) minmax(10rem, 1fr) minmax(15rem, 3fr) minmax(8rem, 1fr);
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.reviews-table-row:last-child {
+  border-bottom: none;
+}
+
+.reviews-table-row:nth-child(odd) {
+  background: rgba(255,255,255,0.005);
+}
+
+.col-time {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.col-reviewer {
+  font-weight: 600;
+}
+
+.col-content {
+  opacity: 0.9;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.col-violation {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.col-violation.compliant {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.col-violation.violation {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+@media (max-width: 50rem) {
   .table-head, .table-row {
     grid-template-columns: 1fr;
   }
@@ -243,10 +331,22 @@
   .table-row {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 6px;
+    gap: 0.375rem;
   }
   .chart-wrap {
-    width: 200px;
-    height: 160px;
+    width: min(12.5rem, 80vw);
+    height: min(10rem, 25vh);
+  }
+  
+  .reviews-table-head, .reviews-table-row {
+    grid-template-columns: 1fr;
+  }
+  .reviews-table-head div {
+    display: none;
+  }
+  .reviews-table-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.375rem;
   }
 }
