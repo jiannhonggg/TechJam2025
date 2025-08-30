@@ -1,6 +1,6 @@
 # Project Title : Leveraging LLM in Assessing Reviews with RAG
 
-This project presents a novel approach to assessing and classifying TikTok user reviews. It aims to identify and categorize reviews that violate the platform's policies, such as advertisements, irrelevant content, or rants without visit, while also identifying valid reviews. At its core, this is a machine learning classification problem.
+This project presents a novel approach to assessing and classifying user reviews. It aims to identify and categorize reviews that violate platform's policies, such as advertisements, irrelevant content, or rants without visit, while also identifying valid reviews. At its core, this is a machine learning classification problem.
 
 ### Introduction 
 
@@ -8,7 +8,17 @@ Traditional machine learning classification models often rely on large, pre-labe
 
 Our approach utilizes a Retrieval-Augmented Generation (RAG) system combined with an ensemble of three distinct Large Language Models (LLMs). This ensemble method allows us to leverage the unique strengths of each model to improve the overall classification accuracy. The choice of three models was a deliberate balance between maximizing performance and accommodating the computational limitations of a local machine. 
 
-< Insert Picture of our architecture >  
+### Approach 
+The project was structured into three main components:
+
+RAG-Based Back-End:
+We created a vector store containing policies and examples of policy violations. When a review is submitted, the RAG system retrieves the top k relevant vectors to provide context for the LLM. Additionally, users can inject metadata about the business or shop into the query, giving the model more context to make accurate judgments. This approach improves the reasoning capability of the LLM and enables better classification decisions.
+
+Ensemble Approach:
+To enhance reliability, we combine predictions from three differently pretrained LLMs using bootstrapping and majority voting. Bootstrapping is a simple yet powerful technique that allows us to leverage the strengths of all models without adding unnecessary complexity, improving the overall robustness of the classification pipeline. We selected three different models each with thier own strengths. A lighter weight model being something we kept in mind. The choice of model was because of how differnt they were, allowing each model to be unique and specialize in its own way. ( Models used : Llama2:7b, Deepseel r1-7b, gemma3:4b) 
+
+Front-End Integration via API:
+Once classifications are made, results and rationales are sent through API calls to the web interface developed with Lynx. This provides users with a smooth, interactive experience to test and evaluate reviews using our system.
 
 ### Testing Data 
 For the purpose of evaluating our model's effectiveness, we have created a small, manually curated dataset to serve as our gold standard for testing. This dataset consists of around 80 samples per class, for a total of 361 samples across our four categories: rant_without_visits, advertisement, irrelevant, and valid.
@@ -24,13 +34,15 @@ By using this small, high-quality dataset purely for evaluation, we can validate
 ### Results and Evaluation 
 We evaluated our model using three key metrics : 
 
-    1. Accuracy 
+    1. Accuracy
     2. Precision 
     3. Recall 
+Our system demonstrates strong precision in identifying valid content up to 88% accuracy and performs well across other classes though ambiguous or overlapping reveiws remain challenging. 
 
 ### Limitations and Future Works: 
 This project has several limitations that can be addressed in future work:
-- Short time frame etx 
+- Due to lack of clear dataset and sufficeint clarrification between some classess. Model might have some overlap in classification for certain classes. 
+- Small time frame and window makes it difficult to build a clean lablled dataset from scratch, however it encourage innocative solution and new ideas. 
 
 # Set Up Guide
 Follow the instructions below to start up the app.
@@ -71,3 +83,14 @@ Usage : To run the application, execute the app.py script
 ```bash
 python app.py
 ``` 
+
+
+# How to reproduce results : 
+Assuming that you have followed the set up guide correctly.
+Run the command below on the command line. if testing for performance metrics on how it fare against our dataset. 
+
+```bash
+python -m src_TestSet.evaluate
+``` 
+OR 
+Run the application to play with the single classifcation and batch classifcation and view rationale. 
