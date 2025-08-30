@@ -22,7 +22,14 @@ def predict():
     result = classifier.classify(text) 
     return jsonify(result)
 
-        
+@app.route("/batch_predict", methods = ['POST'])
+def batchPredict(): 
+    data = request.json
+    reviewList = data.get("List", "")
+
+    result = classifier.classify_batch(reviewList)
+    return jsonify(result)
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=4000)
 

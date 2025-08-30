@@ -17,7 +17,7 @@ def extract_json(text):
             return {"label": "unknown", "rationale": text}
     return {"label": "unknown", "rationale": text}
 
-labels = ["valid", "advertisement", "irrelevant", "rant_without_visit"]
+labels = ["Valid", "Advertisement", "Irrelevant Content", "Rant Without Visit"]
 # os.environ["OLLAMA_DEVICE"] = "cpu"
 
 class RAGEnsembleClassifier:
@@ -114,20 +114,55 @@ class RAGEnsembleClassifier:
         #         "label": result["label"],
         #         "rationale": result["rationale"]
         #     })
-
+        #
         # Majority voting
-        vote_counts = Counter([r["label"] for r in results])
-        majority_label = vote_counts.most_common(1)[0][0]
+        # vote_counts = Counter([r["label"] for r in results])
+        # majority_label = vote_counts.most_common(1)[0][0]
+        #
+        # if show_rationale:
+        #     return {
+        #         "label": majority_label,
+        #         "votes": vote_counts,
+        #         "model_outputs": results
+        #     }
+        # else:
+        #     return {"label": majority_label} 
 
-        if show_rationale:
-            return {
-                "label": majority_label,
-                "votes": vote_counts,
-                "model_outputs": results
+    def classify_batch(self, reviews, shop_info=None, show_rationale=False, sleep=0.0):
+        """
+        Sequentially classify a list of reviews.
+
+        Args:
+            reviews (list[str]): List of review texts.
+            shop_info (dict, optional): Optional shop metadata.
+            show_rationale (bool): Whether to include rationale and vote breakdown.
+            sleep (float): Optional delay between reviews (seconds).
+
+        Returns:
+            list[dict]: List of classification outputs (same format as classify()).
+        """
+        with ThreadPoolExecutor(max_workers = os.cpu_count() or 4) as executor: 
+            futures = {
+                executor.submit(self.classify, review, shop_info, show_rationale): review
+                for review in reviews 
             }
-        else:
-            return {"label": majority_label}
-                    
+
+        # Use a list to store the results in the correct order
+        ordered_results = []
+        
+        # Iterate through the futures in the order they were submitted
+        for future in futures:
+            try:
+                result = future.result()
+                ordered_results.append(result)
+            except Exception as e:
+                # Get the original review text (this is a bit tricky, but we can assume it's the
+                # next one in the original list for this simple example)
+                print(f"[Error] Classification failed: {e}")
+                ordered_results.append({"label": "error", "error": str(e)})
+                
+        return ordered_results
+
 
 if __name__ == "__main__":
     # Load vector store
