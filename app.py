@@ -17,9 +17,10 @@ classifier = RAGEnsembleClassifier(vs)
 def predict(): 
     data = request.json
     text = data.get("text", "")
-    
+    shop_info = data.get("shop_info", {})
+
     #Call our model 
-    result = classifier.classify(text) 
+    result = classifier.classify(text, shop_info=shop_info)
     return jsonify(result)
 
         
