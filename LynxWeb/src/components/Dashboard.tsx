@@ -45,45 +45,65 @@ const Dashboard: React.FC = () => {
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
 
   const generatePieDataFromReviews = (reviewData: Review[]) => {
-    const counts = {
-      Compliant: 0,
-      Advertisement: 0,
-      Irrelevant: 0,
-      Rant: 0,
-      Other: 0
-    };
+    // Dynamically count all violation types
+    const counts: { [key: string]: number } = {};
 
     reviewData.forEach(review => {
-      const violationType = review.violationType;
-      if (violationType === 'Compliant') {
-        counts.Compliant++;
-      } else if (violationType === 'advertisement') {
-        counts.Advertisement++;
-      } else if (violationType === 'irrelevant') {
-        counts.Irrelevant++;
-      } else if (violationType === 'rant') {
-        counts.Rant++;
-      } else {
-        counts.Other++;
-      }
+      const violationType = review.violationType || 'Unknown';
+      counts[violationType] = (counts[violationType] || 0) + 1;
     });
 
     const labels: string[] = [];
     const data: number[] = [];
     const backgroundColor: string[] = [];
-    const colorMap = {
-      Compliant: '#2ecc71',
-      Advertisement: '#f1c40f',
-      Irrelevant: '#e74c3c',
-      Rant: '#e67e22',
-      Other: '#9b59b6'
+    
+    // Extended color palette for dynamic labels
+    const colors = [
+      '#2ecc71', // Green for Compliant
+      '#f1c40f', // Yellow for Advertisement
+      '#e74c3c', // Red for violations
+      '#e67e22', // Orange for Rant
+      '#9b59b6', // Purple
+      '#3498db', // Blue
+      '#f39c12', // Orange
+      '#e91e63', // Pink
+      '#00bcd4', // Cyan
+      '#4caf50', // Light Green
+      '#ff9800', // Deep Orange
+      '#795548', // Brown
+      '#607d8b', // Blue Grey
+      '#ff5722', // Deep Orange Red
+      '#9c27b0'  // Deep Purple
+    ];
+
+    // Preferred colors for known violation types
+    const colorMap: { [key: string]: string } = {
+      'Compliant': '#2ecc71',
+      'Advertisement': '#f1c40f',
+      'advertisement': '#f1c40f',
+      'Irrelevant': '#e74c3c',
+      'irrelevant': '#e74c3c',
+      'Irrelevant Content': '#e74c3c',
+      'Rant': '#e67e22',
+      'rant': '#e67e22',
+      'Rant Without Visit': '#e67e22',
+      'Other': '#9b59b6',
+      'Unknown': '#95a5a6'
     };
 
+    let colorIndex = 0;
     Object.entries(counts).forEach(([key, value]) => {
       if (value > 0) {
         labels.push(key);
         data.push(value);
-        backgroundColor.push(colorMap[key as keyof typeof colorMap]);
+        
+        // Use predefined color if available, otherwise use from color palette
+        if (colorMap[key]) {
+          backgroundColor.push(colorMap[key]);
+        } else {
+          backgroundColor.push(colors[colorIndex % colors.length]);
+          colorIndex++;
+        }
       }
     });
 
@@ -225,7 +245,7 @@ const Dashboard: React.FC = () => {
         savedResult = saveToReviewHistory(result, review);
         processedCount++;
         saveCount++;
-        const violationType = result.label === 'valid' ? 'Compliant' : result.label;
+        const violationType = (result.label === 'valid' || result.label === 'Valid') ? 'Compliant' : result.label;
         if (violationType === 'Compliant') {
           categoryCounts.compliant++;
         } else if (result.label === 'error') {
@@ -308,7 +328,13 @@ const Dashboard: React.FC = () => {
     try {
       const requestBody: any = { text: text };
       if (metadata && metadata.trim()) {
-        requestBody.shop_info = metadata;
+        const cleaned = metadata.replace(/^"(.*)"$/, '$1');
+        try {
+          requestBody.shop_info = JSON.parse(cleaned);
+        } catch (err) {
+          console.warn('shop metadata is not valid JSON, sending as string fallback', err);
+          requestBody.shop_info = cleaned;
+        }
       }
       
       console.log(JSON.stringify(requestBody));
@@ -318,7 +344,6 @@ const Dashboard: React.FC = () => {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        
         body: JSON.stringify(requestBody),
       });
       
@@ -371,7 +396,7 @@ const Dashboard: React.FC = () => {
       justification: predictionData.model_outputs && predictionData.model_outputs.length > 0 
         ? predictionData.model_outputs[0].rationale 
         : 'AI classification based on ensemble model consensus',
-      violationType: predictionData.label === 'valid' ? 'Compliant' : predictionData.label
+      violationType: (predictionData.label === 'valid' || predictionData.label === 'Valid') ? 'Compliant' : predictionData.label
     };
 
     if (metadata && metadata.trim()) {
@@ -631,12 +656,12 @@ const Dashboard: React.FC = () => {
                   
                   <div className="result-main">
                     <div className="result-status">
-                      <div className={`status-indicator ${predictionResult.label === 'valid' ? 'compliant' : 'violation'}`}>
+                      <div className={`status-indicator ${(predictionResult.label === 'valid' || predictionResult.label === 'Valid') ? 'compliant' : 'violation'}`}>
                         <div className="status-icon">
-                          {predictionResult.label === 'valid' ? '✓' : '⚠'}
+                          {(predictionResult.label === 'valid' || predictionResult.label === 'Valid') ? '✓' : '⚠'}
                         </div>
                         <div className="status-text">
-                          <span className="status-label">{predictionResult.label === 'valid' ? 'Compliant' : predictionResult.label}</span>
+                          <span className="status-label">{(predictionResult.label === 'valid' || predictionResult.label === 'Valid') ? 'Compliant' : predictionResult.label}</span>
                           {predictionResult.votes && (
                             <span className="confidence-score">
                               Consensus: {Math.max(...(Object.values(predictionResult.votes) as number[]))} / {(Object.values(predictionResult.votes) as number[]).reduce((a, b) => a + b, 0)} models
@@ -660,8 +685,8 @@ const Dashboard: React.FC = () => {
                               <div key={index} className={`model-card ${output.label === predictionResult.label ? 'consensus' : 'dissenting'}`}>
                                 <div className="model-header">
                                   <span className="model-name">{output.model}</span>
-                                  <span className={`model-label ${output.label === 'valid' ? 'valid' : 'invalid'}`}>
-                                    {output.label === 'valid' ? 'Compliant' : output.label}
+                                  <span className={`model-label ${(output.label === 'valid' || output.label === 'Valid') ? 'valid' : 'invalid'}`}>
+                                    {(output.label === 'valid' || output.label === 'Valid') ? 'Compliant' : output.label}
                                   </span>
                                 </div>
                                 <div className="model-rationale">
