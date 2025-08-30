@@ -4,8 +4,9 @@ from src_RAG.vector_store import VectorStore
 from sklearn.metrics import accuracy_score
 
 df = pd.read_csv("data/reviews_dataset.csv")
-# Get the first 5 rows
-df = df.head(2)
+
+# Get a random sample of 50 rows from the DataFrame
+df = df.sample(n=50, random_state=42)
 
 texts = df["text"].tolist()
 true_labels = df["review_category"].tolist()
@@ -35,4 +36,4 @@ for i in range(len(texts)):
 # Calculate and print accuracy
 accuracy = accuracy_score(true_labels, predicted_labels)
 print("-" * 25)
-print(f"Accuracy on the first 5 rows: {accuracy:.2f}")
+print(f"Accuracy on the first 50 rows: {accuracy:.2f}")
