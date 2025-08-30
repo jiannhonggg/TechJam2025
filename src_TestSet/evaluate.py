@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import pandas as pd 
 from src_RAG.rag_classifier import RAGEnsembleClassifier
 from src_RAG.vector_store import VectorStore
@@ -6,7 +10,7 @@ from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 df = pd.read_csv("data/reviews_dataset.csv")
 
 # Get a random sample of 50 reviews for evaluation
-df = df.sample(n=5, random_state=42)
+# df = df.sample(n=50, random_state=42)
 
 texts = df["text"].tolist()
 true_labels = df["review_category"].tolist()
@@ -53,10 +57,10 @@ print("-" * 65)
 for i, label in enumerate(labels_to_evaluate):
     print(f"{label:<20} {precision[i]:<15.4f} {recall[i]:<15.4f} {f1_score[i]:<15.4f}")
 
-# --- Individual Review Check ---
-print("\n--- Individual Review Check ---")
-for i in range(len(texts)):
-    print(f"Review {i+1}: {texts[i]}")
-    print(f"  Actual:    {true_labels[i]}")
-    print(f"  Predicted: {predicted_labels[i]}\n")
+# # --- Individual Review Check ---
+# print("\n--- Individual Review Check ---")
+# for i in range(len(texts)):
+#     print(f"Review {i+1}: {texts[i]}")
+#     print(f"  Actual:    {true_labels[i]}")
+#     print(f"  Predicted: {predicted_labels[i]}\n")
 

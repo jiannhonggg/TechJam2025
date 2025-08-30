@@ -83,7 +83,8 @@ Usage : To run the application, execute the app.py script
 ```bash
 python app.py
 ``` 
-
+### Installation for LynxWebapp
+See: [Details](LynxWeb/README.md)
 
 # How to reproduce results : 
 Assuming that you have followed the set up guide correctly.
