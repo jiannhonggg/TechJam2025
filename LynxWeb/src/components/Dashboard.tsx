@@ -38,11 +38,11 @@ const Dashboard: React.FC = () => {
   const [fileInputValue, setFileInputValue] = useState<string>('');
   const [shopMetadata, setShopMetadata] = useState<string>('');
   const [predictionResult, setPredictionResult] = useState<any>(null);
+  const [analyzedText, setAnalyzedText] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isBatchProcessing, setIsBatchProcessing] = useState<boolean>(false);
   const [batchProgress, setBatchProgress] = useState<{ current: number; total: number; currentItem: string }>({ current: 0, total: 0, currentItem: '' });
   const [batchResults, setBatchResults] = useState<any>(null);
-  const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
 
   const generatePieDataFromReviews = (reviewData: Review[]) => {
     // Dynamically count all violation types
@@ -352,6 +352,7 @@ const Dashboard: React.FC = () => {
         
         if (!isBatchMode) {
           setPredictionResult(result);
+          setAnalyzedText(text); // Store the analyzed text
           saveToReviewHistory(result, reviewText, metadata);
         }
         
@@ -409,8 +410,6 @@ const Dashboard: React.FC = () => {
     localStorage.setItem('reviewHistory', JSON.stringify(updatedReviews));
     
     setReviews(updatedReviews);
-    
-    setRefreshTrigger(prev => prev + 1);
     
     return newReview;
   };
@@ -674,7 +673,7 @@ const Dashboard: React.FC = () => {
                     <div className="result-details">
                       <div className="analyzed-text">
                         <h5>Analyzed Text:</h5>
-                        <div className="text-content">{fileInputValue}</div>
+                        <div className="text-content">{analyzedText}</div>
                       </div>
                       
                       {predictionResult.model_outputs && predictionResult.model_outputs.length > 0 && (
@@ -705,6 +704,7 @@ const Dashboard: React.FC = () => {
                       className="action-btn secondary"
                       onClick={() => {
                         setPredictionResult(null);
+                        setAnalyzedText('');
                         setFileInputValue('');
                         setShopMetadata('');
                       }}
