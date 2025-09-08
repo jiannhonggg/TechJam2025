@@ -57,6 +57,12 @@ precision, recall, f1_score, _ = precision_recall_fscore_support(
     zero_division=0,
     average=None # Set to None for per-class metrics
 )
+# --- Individual Review Check ---
+print("\n--- Individual Review Check ---")
+for i in range(len(texts)):
+    print(f"Review {i+1}: {texts[i]}")
+    print(f"  Actual:    {true_labels[i]}")
+    print(f"  Predicted: {predicted_labels[i]}\n")
 
 # Print the report
 print(f"Overall Accuracy: {accuracy:.4f}\n")
@@ -69,11 +75,4 @@ for i, label in enumerate(labels_to_evaluate):
 print(f"\n--- Inference Timing ---")
 print(f"Total time taken: {total_time:.4f} seconds")
 print(f"Average time per review: {avg_time_per_sample:.4f} seconds")
-
-# # --- Individual Review Check ---
-# print("\n--- Individual Review Check ---")
-# for i in range(len(texts)):
-#     print(f"Review {i+1}: {texts[i]}")
-#     print(f"  Actual:    {true_labels[i]}")
-#     print(f"  Predicted: {predicted_labels[i]}\n")
 

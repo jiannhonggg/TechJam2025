@@ -1,11 +1,13 @@
 # src/rag_classifier.py
 import json
 from src_RAG.vector_store import VectorStore
+# from vector_store import VectorStore
 import ollama  # make sure ollama Python SDK is installed
 import os 
 from collections import Counter 
 import re 
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import time 
 
 def extract_json(text): 
     """Safely extract JSON from any model output."""
@@ -40,8 +42,36 @@ class RAGEnsembleClassifier:
             }
         )
         return response.get("message", {}).get("content", "")
+    
+    def pre_filter(self, review_text):
+        """
+        Simple Textual pre-filter for obvious cases. 
+        Expandable and scalable over time. 
+        Skips retrieval and inference -> huge speedup. 
+        """
+        text = review_text.lower()
+        if "www." in text or "http" in text or "use code" in text:
+            return "Advertisement"
+        if "never been" in text or "haven't visited" in text:
+            return "Rant Without Visit"
+        return None
+
 
     def classify(self, review_text, shop_info = None, show_rationale = True):
+        
+        # Step 0: pre-filter
+        pre_label = self.pre_filter(review_text)
+        if pre_label:
+            return {
+                "label": pre_label,
+                "votes": {pre_label: len(self.model)},
+                "model_outputs": [
+                    {"model": m, "label": pre_label, "rationale": "Detected by pre-filter"}
+                    for m in self.model
+                ]
+            }
+
+        # Step 1 : retrieve top-k passages from vector store 
         passages = self.vector_store.query(review_text, top_k=self.top_k)
         context = "\n".join(passages)
 
@@ -56,7 +86,9 @@ class RAGEnsembleClassifier:
         # Build the Prompt 
         prompt = f"""
         You are a location review classifier. Use the context below to classify the review. Only Classify the [Review]. 
-        Return JSON with 'label' (one of: {labels}) and 'rationale' (short explanation). 
+        Return JSON ONLY with 
+        - 'label' (one of: {labels}), do NOT invent any other label.
+        - 'rationale' (short explanation). 
         {shop_context}
         
         Context: These are example reviews (for reference only): 
@@ -184,8 +216,18 @@ if __name__ == "__main__":
             "Name": "Pizza Town",
             "Type": "Restaurant",
             "Known Promotions": "2-for-1 Tuesday deal, Student discount"}           
+
+        # --- Measure Inference Time ---
+        start_time = time.time()
         
         result = classifier.classify(review, shop_info = shop_info) 
+
+        # --- Measure Inference Time --- 
+        end_time = time.time() 
+        total_time = end_time - start_time
         
         print(f"\nReview: {review}")
         print(f"Prediction: {result}")
+
+        print(f"\n--- Inference Timing ---")
+        print(f"Total time taken: {total_time:.4f} seconds")
