@@ -1,6 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import time 
 
 import pandas as pd 
 from src_RAG.rag_classifier import RAGEnsembleClassifier
@@ -9,18 +10,26 @@ from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 df = pd.read_csv("data/reviews_dataset.csv")
 
-# Get a random sample of 50 reviews for evaluation
-# df = df.sample(n=50, random_state=42)
+# Get a random sample of n reviews for evaluation
+df = df.sample(n=5, random_state=42)
 
 texts = df["text"].tolist()
 true_labels = df["review_category"].tolist()
 
-# Run Inferences 
+# Set Up Vector database 
 vs = VectorStore("assets/policies.md", "assets/exemplars.json")
 classifier = RAGEnsembleClassifier(vs)
 
-# Use classify_batch for multiple inferences
+# --- Measure Inference Time ---
+start_time = time.time()
+
+# Run Inference, Use classify_batch for multiple inferences
 predicted_results = classifier.classify_batch(texts, show_rationale=False, sleep=0.1)
+
+# --- Measure Inference Time --- 
+end_time = time.time() 
+total_time = end_time - start_time
+avg_time_per_sample = total_time / len(texts) 
 
 # Extract predicted labels
 predicted_labels = [result["label"] for result in predicted_results]
@@ -56,6 +65,10 @@ print("-" * 65)
 
 for i, label in enumerate(labels_to_evaluate):
     print(f"{label:<20} {precision[i]:<15.4f} {recall[i]:<15.4f} {f1_score[i]:<15.4f}")
+
+print(f"\n--- Inference Timing ---")
+print(f"Total time taken: {total_time:.4f} seconds")
+print(f"Average time per review: {avg_time_per_sample:.4f} seconds")
 
 # # --- Individual Review Check ---
 # print("\n--- Individual Review Check ---")
