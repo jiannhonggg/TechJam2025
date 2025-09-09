@@ -135,66 +135,58 @@ class RAGEnsembleClassifier:
             }
         else:
             return {"label": majority_label}
-        
-        # # Single Threaded Option
-        # results = []
-        # for model_name in self.model:   # run models one by one
-        #     output_text = self.generate(prompt, model_name)
-        #     result = extract_json(output_text)
-        #     results.append({
-        #         "model": model_name,
-        #         "label": result["label"],
-        #         "rationale": result["rationale"]
-        #     })
-        #
-        # Majority voting
-        # vote_counts = Counter([r["label"] for r in results])
-        # majority_label = vote_counts.most_common(1)[0][0]
-        #
-        # if show_rationale:
-        #     return {
-        #         "label": majority_label,
-        #         "votes": vote_counts,
-        #         "model_outputs": results
-        #     }
-        # else:
-        #     return {"label": majority_label} 
 
     def classify_batch(self, reviews, shop_info=None, show_rationale=False, sleep=0.0):
         """
-        Sequentially classify a list of reviews.
+        Classify a list of reviews with optional shop-specific metadata.
 
         Args:
-            reviews (list[str]): List of review texts.
-            shop_info (dict, optional): Optional shop metadata.
+            reviews (list): Either:
+                - list of str (review_texts) → uses one global shop_info dict
+                - list of (review_text, business_name) → lookup per shop
+            shop_info (dict, optional): Full metadata dict, e.g. from metadata.py
             show_rationale (bool): Whether to include rationale and vote breakdown.
             sleep (float): Optional delay between reviews (seconds).
 
         Returns:
-            list[dict]: List of classification outputs (same format as classify()).
+            list[dict]: List of classification outputs.
         """
-        with ThreadPoolExecutor(max_workers = os.cpu_count() or 4) as executor: 
+
+        tasks = []
+
+        # Case 1: reviews is list of strings
+        if all(isinstance(r, str) for r in reviews):
+            for review in reviews:
+                tasks.append((review, shop_info or {}))  # just pass global shop_info dict
+
+        # Case 2: reviews is list of (review_text, business_name)
+        elif all(isinstance(r, tuple) and len(r) == 2 for r in reviews):
+            for review_text, business_name in reviews:
+                metadata = {}
+                if shop_info:  # lookup if dict provided
+                    metadata = shop_info.get(business_name, {})
+                tasks.append((review_text, metadata))
+        else:
+            raise ValueError("Reviews must be list of strings OR list of (review_text, business_name) tuples")
+
+        # Run in parallel
+        with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor:
             futures = {
-                executor.submit(self.classify, review, shop_info, show_rationale): review
-                for review in reviews 
+                executor.submit(self.classify, review_text, metadata, show_rationale): (review_text, metadata)
+                for review_text, metadata in tasks
             }
 
-        # Use a list to store the results in the correct order
         ordered_results = []
-        
-        # Iterate through the futures in the order they were submitted
+
         for future in futures:
             try:
                 result = future.result()
                 ordered_results.append(result)
             except Exception as e:
-                # Get the original review text (this is a bit tricky, but we can assume it's the
-                # next one in the original list for this simple example)
                 print(f"[Error] Classification failed: {e}")
                 ordered_results.append({"label": "error", "error": str(e)})
-                
-        return ordered_results
 
+        return ordered_results
 
 if __name__ == "__main__":
     # Load vector store
