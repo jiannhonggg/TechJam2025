@@ -12,7 +12,7 @@ from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 df = pd.read_csv("data/reviews_dataset.csv")
 
 # Get a random sample of n reviews for evaluation
-df = df.sample(n=5, random_state=42)
+# df = df.sample(n=15, random_state=42)
 
 texts = df["text"].tolist() # For inference without metadata only reveiws 
 reviews = list(zip(df["text"], df["business_name"])) # For inference with metadata 
@@ -26,10 +26,10 @@ classifier = RAGEnsembleClassifier(vs)
 start_time = time.time()
 
 ## Run Inference, Use classify_batch for multiple inferences ( Without any Shop metadata )
-# predicted_results = classifier.classify_batch(texts, show_rationale=False, sleep=0.1)
+predicted_results = classifier.classify_batch(texts, show_rationale=False, sleep=0.1)
 
 # Run Inference, Use Classify_batch for mulitple inferences ( With Shop metadata Dictionary )
-predicted_results = classifier.classify_batch(reviews, shop_info=shop_info, show_rationale=False, sleep=0.1 )
+# predicted_results = classifier.classify_batch(reviews, shop_info=shop_info, show_rationale=False, sleep=0.1 )
 
 # --- Measure Inference Time --- 
 end_time = time.time() 

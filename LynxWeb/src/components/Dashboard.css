@@ -216,6 +216,56 @@
   .search { min-width: auto; flex: 1; }
 }
 
+/* Hide search policies in mobile/portrait mode */
+@media (max-width: 768px) {
+  .left-col {
+    display: none;
+  }
+  
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Hide the policy search input since policies are hidden */
+  .search[placeholder="Search policies"] {
+    display: none;
+  }
+  
+  /* Right align the date when search is hidden */
+  .header-right {
+    justify-content: flex-end;
+  }
+  
+  .date {
+    text-align: right;
+  }
+}
+
+/* Portrait orientation specific */
+@media (orientation: portrait) and (max-width: 768px) {
+  .left-col {
+    display: none;
+  }
+  
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Hide the policy search input since policies are hidden */
+  .search[placeholder="Search policies"] {
+    display: none;
+  }
+  
+  /* Right align the date when search is hidden */
+  .header-right {
+    justify-content: flex-end;
+  }
+  
+  .date {
+    text-align: right;
+  }
+}
+
 .stat-card {
   background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
   border: 1px solid rgba(255,255,255,0.04);
