@@ -1,4 +1,4 @@
-![Title Image](images/Tiktok TechJam Team Win One.png)
+![Title Image](images/WinOne.png)
 
 # Project Title : Leveraging LLM in Assessing Reviews with RAG
 
