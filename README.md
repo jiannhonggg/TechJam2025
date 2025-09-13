@@ -1,9 +1,8 @@
+![Title Image](images/Tiktok TechJam Team Win One.png)
+
 # Project Title : Leveraging LLM in Assessing Reviews with RAG
 
 This project presents a novel approach to assessing and classifying user reviews. It automatically identifies reviews that violate platform policies (advertisements, irrelevant content, or rants without visit) while also detecting valid reviews. Our system combines Retrieval-Augmented Generation (RAG) with an ensemble of three Large Language Models (LLMs) for high accuracy, explainability, and scalability.
-
-### Project Video 
-https://youtu.be/6cyCtZDzers
 
 ### Introduction 
 
@@ -58,21 +57,22 @@ Features:
 
 We evaluated the system on a curated dataset of 361 samples (≈80 samples per category). This limited sample size is not used to train our models in the traditional sense, as our approach is based on Retrieval-Augmented Generation (RAG) and few-shot prompting. Instead, this dataset serves two key purposes:
 
-    1. Demonstration of Efficacy: The small dataset allows us to run rapid, repeatable tests to demonstrate that our RAG-based ensemble system can accurately classify reviews based on a limited set of examples.
+* Demonstration of Efficacy: The small dataset allows us to run rapid, repeatable tests to demonstrate that our RAG-based ensemble system can accurately classify reviews based on a limited set of examples.
 
-    2. Benchmark for Local Testing: It provides a practical, manageable benchmark for continuous integration and local development, allowing us to quickly verify that changes to the system do not degrade performance.
+* Benchmark for Local Testing: It provides a practical, manageable benchmark for continuous integration and local development, allowing us to quickly verify that changes to the system do not degrade performance.
 
 By using this small, high-quality dataset purely for evaluation, we can validate our innovative approach without the need for a massive, pre-labeled training corpus, proving that our methodology can perform well with minimal data.
 
 
 ### Limitations and Future Works: 
-    1. Tie-Breaking: Ensemble currently defaults to LLaMA2-7B when all models disagree; weighted voting could improve this.
-    2. Language Support: Only English is currently supported; mixed-language reviews remain challenging.
+- Tie-Breaking: Ensemble currently defaults to LLaMA2-7B when all models disagree; weighted voting could improve this.
+
+- Language Support: Only English is currently supported; mixed-language reviews remain challenging.
 
 ### Future Works 
-    1. Refine Ensemble method for better category-specific performance
-    2. Expand to multi-language support
-    3. Exploration of different forms of Retreival Augmented Generation. Such as DeepRAG for higher answer accuracy.
+- Refine Ensemble method for better category-specific performance
+- Expand to multi-language support
+- Exploration of different forms of Retreival Augmented Generation. Such as DeepRAG for higher answer accuracy.
 
 
 # Set Up Guide
