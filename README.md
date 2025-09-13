@@ -1,63 +1,92 @@
 # Project Title : Leveraging LLM in Assessing Reviews with RAG
 
-This project presents a novel approach to assessing and classifying user reviews. It aims to identify and categorize reviews that violate platform's policies, such as advertisements, irrelevant content, or rants without visit, while also identifying valid reviews. At its core, this is a machine learning classification problem.
+This project presents a novel approach to assessing and classifying user reviews. It automatically identifies reviews that violate platform policies (advertisements, irrelevant content, or rants without visit) while also detecting valid reviews. Our system combines Retrieval-Augmented Generation (RAG) with an ensemble of three Large Language Models (LLMs) for high accuracy, explainability, and scalability.
+
+### Project Video 
+https://youtu.be/6cyCtZDzers
 
 ### Introduction 
 
-Traditional machine learning classification models often rely on large, pre-labeled datasets. However, due to the challenge of obtaining a sufficiently large and unfiltered dataset of TikTok reviews, we've came up with a different solution.
+Online reviews influence decisions for users, businesses, and platforms. However, noisy or irrelevant reviews—such as spam, unrelated chatter, or unverified rants—can distort reality, leading to poor decisions, unfair reputations, and high moderation costs.
 
-Our approach utilizes a Retrieval-Augmented Generation (RAG) system combined with an ensemble of three distinct Large Language Models (LLMs). This ensemble method allows us to leverage the unique strengths of each model to improve the overall classification accuracy. The choice of three models was a deliberate balance between maximizing performance and accommodating the computational limitations of a local machine. 
+Traditional ML classifiers require large, clean, labeled datasets, which are difficult to obtain. To overcome this, we designed a system that requires minimal labeled data while maintaining high classification accuracy and explainability. This also means we do not need to retrain the model every time categories are updated.
+
+Objective:
+
+- Automatically classify reviews into four categories aligned with platform policies.
+
+- Provide rationales for every classification for moderator confidence.
+
+- Achieve high accuracy with fast inference and minimal human intervention.
 
 ### Approach 
-The project was structured into three main components:
+The project was structured into four main components:
 
-RAG-Based Back-End:
-We created a vector store containing policies and examples of policy violations. When a review is submitted, the RAG system retrieves the top k relevant vectors to provide context for the LLM. Additionally, users can inject metadata about the business or shop into the query, giving the model more context to make accurate judgments. This approach improves the reasoning capability of the LLM and enables better classification decisions.
+#### Pre-Filtering : 
+- Obvious advertisements or irrelevant reveiws. 
+- Saves time and compute by skipping unnecessary LLM calls
 
-Ensemble Approach:
-To enhance reliability, we combine predictions from three differently pretrained LLMs using bootstrapping and majority voting. Bootstrapping is a simple yet powerful technique that allows us to leverage the strengths of all models without adding unnecessary complexity, improving the overall robustness of the classification pipeline. We selected three different models each with thier own strengths. A lighter weight model being something we kept in mind. The choice of model was because of how differnt they were, allowing each model to be unique and specialize in its own way. ( Models used : Llama2:7b, Deepseel r1-7b, gemma3:4b) 
+####  RAG-Based Backend
+- A vector store contains policies and example reviews.
+- When a review is submitted, the system retrieves the most relevant context to guide the LLMs.
+- Optional metadata (e.g., business type) further informs classification, improving accuracy and context-awareness.
+  
+#### Ensemble Approach:
+- The three models process reviews in parallel.
+- Outputs are combined via bootstrapping and majority voting for robust and reliable classification.
+- Each model brings unique strengths, and ensemble voting reduces errors compared to using a single model.
+- (Models used : Llama2:7b, Deepseel r1-7b, gemma3:4b) 
 
-Front-End Integration via API:
-Once classifications are made, results and rationales are sent through API calls to the web interface developed with Lynx. This provides users with a smooth, interactive experience to test and evaluate reviews using our system.
+#### Front-End Integration via API: 
+Results and rationales are served through a Lynx-powered web interface
 
-### Testing Data 
-For the purpose of evaluating our model's effectiveness, we have created a small, manually curated dataset to serve as our gold standard for testing. This dataset consists of around 80 samples per class, for a total of 361 samples across our four categories: rant_without_visits, advertisement, irrelevant, and valid.
+Features:
+- Single review classification (with optional metadata)
+- Batch upload via CSV for large-scale processing
+- Dashboard visualization for immediate insights
+- Exportable results for integration into existing workflows
 
-This limited sample size is not used to train our models in the traditional sense, as our approach is based on Retrieval-Augmented Generation (RAG) and few-shot prompting. Instead, this dataset serves two key purposes:
+### Testing & Evaluation 
+#### Key Metrics:
+- Accuracy: Up to 78% Overall
+- Precision & Recall: Strong performance for Advertisement and Valid categories
+- Inference Speed: Average 4s per review; 3.2s with metadata
 
-Demonstration of Efficacy: The small dataset allows us to run rapid, repeatable tests to demonstrate that our RAG-based ensemble system can accurately classify reviews based on a limited set of examples.
+#### Observations:
+- Ambiguous reviews cause some misclassification between “Rant Without Visit” and “Irrelevant Content.”
+- Metadata improves accuracy by 8% and inference speed by 15%.
 
-Benchmark for Local Testing: It provides a practical, manageable benchmark for continuous integration and local development, allowing us to quickly verify that changes to the system do not degrade performance.
+We evaluated the system on a curated dataset of 361 samples (≈80 samples per category). This limited sample size is not used to train our models in the traditional sense, as our approach is based on Retrieval-Augmented Generation (RAG) and few-shot prompting. Instead, this dataset serves two key purposes:
+
+    1. Demonstration of Efficacy: The small dataset allows us to run rapid, repeatable tests to demonstrate that our RAG-based ensemble system can accurately classify reviews based on a limited set of examples.
+
+    2. Benchmark for Local Testing: It provides a practical, manageable benchmark for continuous integration and local development, allowing us to quickly verify that changes to the system do not degrade performance.
 
 By using this small, high-quality dataset purely for evaluation, we can validate our innovative approach without the need for a massive, pre-labeled training corpus, proving that our methodology can perform well with minimal data.
 
-### Results and Evaluation 
-We evaluated our model using three key metrics : 
-
-    1. Accuracy
-    2. Precision 
-    3. Recall 
-Our system demonstrates strong precision in identifying valid content up to 88% accuracy and performs well across other classes though ambiguous or overlapping reveiws remain challenging. 
 
 ### Limitations and Future Works: 
-This project has several limitations that can be addressed in future work:
-- Due to lack of clear dataset and sufficeint clarrification between some classess. Model might have some overlap in classification for certain classes. 
-- Small time frame and window makes it difficult to build a clean lablled dataset from scratch, however it encourage innocative solution and new ideas. 
+    1. Tie-Breaking: Ensemble currently defaults to LLaMA2-7B when all models disagree; weighted voting could improve this.
+    2. Language Support: Only English is currently supported; mixed-language reviews remain challenging.
+
+### Future Works 
+    1. Refine Ensemble method for better category-specific performance
+    2. Expand to multi-language support
+    3. Exploration of different forms of Retreival Augmented Generation. Such as DeepRAG for higher answer accuracy.
+
 
 # Set Up Guide
 Follow the instructions below to start up the app.
 
 ### Prerequisites
 Python: Ensure you have Python installed. The project was developed with Python 3.1.2
-
 Ollama: You need to have Ollama installed and running on your system to manage the language models.
 
 ### Installation
 Clone the Repository
 
-
 ```bash
-git clone https://github.com/your-username/your-project-name.git
+git clone git@github.com:jiannhonggg/TechJam2025.git
 cd your-project-name
 ``` 
 
@@ -73,6 +102,7 @@ pip install -r requirements.txt
 ``` 
 
 Set Up Ollama Models
+Download Ollama from https://ollama.com/download/windows 
 ```bash
 ollama pull llama2:7b
 ollama pull deepseek-r17b
@@ -87,11 +117,10 @@ python app.py
 See: [Details](LynxWeb/README.md)
 
 # How to reproduce results : 
-Assuming that you have followed the set up guide correctly.
-Run the command below on the command line. if testing for performance metrics on how it fare against our dataset. 
-
+Assuming that you have followed the set up guide correctly. 
+Run the application to play with the single classifcation and batch classifcation and view rationale. 
+OR 
+Run the command below on the command line. if testing for performance metrics on how it fare against our curated dataset. 
 ```bash
 python -m src_TestSet.evaluate
 ``` 
-OR 
-Run the application to play with the single classifcation and batch classifcation and view rationale. 
