@@ -4,6 +4,9 @@
 
 This project presents a novel approach to assessing and classifying user reviews. It automatically identifies reviews that violate platform policies (advertisements, irrelevant content, or rants without visit) while also detecting valid reviews. Our system combines Retrieval-Augmented Generation (RAG) with an ensemble of three Large Language Models (LLMs) for high accuracy, explainability, and scalability.
 
+### Project Video 
+https://youtu.be/6cyCtZDzers 
+
 ### Introduction 
 
 Online reviews influence decisions for users, businesses, and platforms. However, noisy or irrelevant reviews—such as spam, unrelated chatter, or unverified rants—can distort reality, leading to poor decisions, unfair reputations, and high moderation costs.
